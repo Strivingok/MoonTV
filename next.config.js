@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const nextConfig = {
-  output: 'standalone',
+  output: 'undefined',
   eslint: {
     dirs: ['src'],
   },
 
-  reactStrictMode: false,
+  reactStrictMode: true,
+  compress: true,
   swcMinify: true,
 
   // Uncoment to add domain whitelist
