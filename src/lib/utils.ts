@@ -29,17 +29,23 @@ export function getImageProxyUrl(): string | null {
 }
 
 /**
- * 处理图片 URL，如果设置了图片代理则使用代理
+ * 处理图片 URL，优先修复豆瓣图片，不依赖 Worker
  */
 export function processImageUrl(originalUrl: string): string {
   if (!originalUrl) return originalUrl;
 
-  // 固定豆瓣图片走你的 Worker 代理（核心修改）
+  // 豆瓣图片：直接替换为可访问的域名，绕过 418
   if (originalUrl.includes('doubanio.com')) {
-    const proxy = 'https://douban-img-proxy.yl21yl.workers.dev';
-    return `${proxy}/?url=${encodeURIComponent(originalUrl)}`;
+    // 修复 1：统一用 img9.doubanio.com
+    let url = originalUrl.replace(/img[0-9]+\.doubanio\.com/, 'img9.doubanio.com');
+    // 修复 2：补充协议（如果没有）
+    if (!url.startsWith('http')) {
+      url = 'https://' + url;
+    }
+    return url;
   }
 
+  // 其他图片：走原有代理逻辑
   const proxyUrl = getImageProxyUrl();
   if (!proxyUrl) return originalUrl;
 
