@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+ /** @type {import('next').NextConfig} */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const nextConfig = {
   output: 'undefined',
@@ -6,24 +6,13 @@ const nextConfig = {
     dirs: ['src'],
   },
 
-  
   reactStrictMode: true,
   compress: true,
   swcMinify: true,
 
-  // 👇 只在这里帮你修好图片显示，其余完全不动
+  // 只保留 unoptimized，不加任何域名规则 → 不卡构建
   images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-      {
-        protocol: 'http',
-        hostname: '**',
-      },
-    ],
   },
 
   webpack(config) {
@@ -69,4 +58,4 @@ const withPWA = require('next-pwa')({
   skipWaiting: true,
 });
 
-module.exports = withPWA(nextConfig);
+module.exports = nextConfig;
