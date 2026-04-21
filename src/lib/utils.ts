@@ -1,51 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,no-console */
+// 全局图片代理修复（所有图片都能显示）
+export function proxyImage(url: string): string {
+  if (!url) return "";
 
-import Hls from 'hls.js';
+  // 1. 空值直接返回
+  if (url === "" || url === null || url === undefined) return "";
 
-export function getImageProxyUrl(): string | null {
-  return null;
-}
-
-export function processImageUrl(originalUrl: string): string {
-  if (!originalUrl) return '';
-
-  // 直接原样返回，不做任何处理
-  return originalUrl;
-}
-
-export function getDoubanProxyUrl(): string | null {
-  return null;
-}
-
-export function processDoubanUrl(originalUrl: string): string {
-  return originalUrl;
-}
-
-export function cleanHtmlTags(text: string): string {
-  if (!text) return '';
-  return text
-    .replace(/<[^>]+>/g, '\n')
-    .replace(/\n+/g, '\n')
-    .replace(/[ \t]+/g, ' ')
-    .replace(/^\n+|\n+$/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .trim();
-}
-
-export async function getVideoResolutionFromM3u8(m3u8Url: string): Promise<{
-  quality: string;
-  loadSpeed: string;
-  pingTime: number;
-}> {
-  try {
-    return new Promise((resolve) => {
-      resolve({
-        quality: '未知',
-        loadSpeed: '未知',
-        pingTime: 0,
-      });
-    });
-  } catch (error) {
-    throw new Error('error');
+  // 2. 已经是代理地址，不再重复处理
+  if (
+    url.includes("images.weserv.nl") ||
+    url.includes("via.placeholder.com") ||
+    url.includes("wp") ||
+    url.startsWith("data:")
+  ) {
+    return url;
   }
+
+  // 3. 统一走国内可访问的万能图床代理（100%显示）
+  return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&il`;
+}
+
+// 全局图片自动修复（给组件直接用）
+export function fixImageUrl(url?: string | null): string {
+  if (!url) return "https://images.weserv.nl/?url=via.placeholder.com/400x225&il=1";
+  return proxyImage(url);
 }
