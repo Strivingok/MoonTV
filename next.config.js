@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @types-eslint/no-var-requires */
 const nextConfig = {
-  // 🔥 修复首页静态渲染不更新图片
-  output: 'export',
+  // 只改这里：删掉错误的 output: undefined
+  // output: 'undefined', 🔴 删掉这一行！
 
   eslint: {
     dirs: ['src'],
@@ -13,7 +13,6 @@ const nextConfig = {
   swcMinify: true,
 
   images: {
-    // 🔥 必须关优化，首页才会用真实地址
     unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
@@ -23,7 +22,7 @@ const nextConfig = {
 
   webpack(config) {
     const fileLoaderRule = config.module.rules.find((rule) =>
-      rule.test?.test?.('.svg')
+      rule.test?.test('.svg')
     );
 
     config.module.rules.push(
@@ -39,12 +38,13 @@ const nextConfig = {
         loader: '@svgr/webpack',
         options: {
           dimensions: false,
-          titleProp: true,
+ titleProp: true,
         },
       }
     );
 
     fileLoaderRule.exclude = /\.svg$/i;
+
     config.resolve.fallback = {
       ...config.resolve.fallback,
       net: false,
