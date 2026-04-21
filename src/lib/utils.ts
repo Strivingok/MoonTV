@@ -34,6 +34,12 @@ export function getImageProxyUrl(): string | null {
 export function processImageUrl(originalUrl: string): string {
   if (!originalUrl) return originalUrl;
 
+  // 固定豆瓣图片走你的 Worker 代理（核心修改）
+  if (originalUrl.includes('doubanio.com')) {
+    const proxy = 'https://douban-img-proxy.yl21yl.workers.dev';
+    return `${proxy}/?url=${encodeURIComponent(originalUrl)}`;
+  }
+
   const proxyUrl = getImageProxyUrl();
   if (!proxyUrl) return originalUrl;
 
