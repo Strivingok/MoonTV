@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
-/* eslint-disable @types-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-var-requires */
 const nextConfig = {
-  // 只改这里：删掉错误的 output: undefined
-  // output: 'undefined', 🔴 删掉这一行！
-
+  output: 'undefined',
   eslint: {
     dirs: ['src'],
   },
@@ -12,37 +10,48 @@ const nextConfig = {
   compress: true,
   swcMinify: true,
 
+  // Uncoment to add domain whitelist
   images: {
     unoptimized: true,
     remotePatterns: [
-      { protocol: 'https', hostname: '**' },
-      { protocol: 'http', hostname: '**' },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
     ],
   },
 
   webpack(config) {
+    // Grab the existing rule that handles SVG imports
     const fileLoaderRule = config.module.rules.find((rule) =>
-      rule.test?.test('.svg')
+      rule.test?.test?.('.svg')
     );
 
     config.module.rules.push(
+      // Reapply the existing rule, but only for svg imports ending in ?url
       {
         ...fileLoaderRule,
         test: /\.svg$/i,
-        resourceQuery: /url/,
+        resourceQuery: /url/, // *.svg?url
       },
+      // Convert all other *.svg imports to React components
       {
         test: /\.svg$/i,
         issuer: { not: /\.(css|scss|sass)$/ },
-        resourceQuery: { not: /url/ },
+        resourceQuery: { not: /url/ }, // exclude if *.svg?url
         loader: '@svgr/webpack',
         options: {
           dimensions: false,
- titleProp: true,
+          titleProp: true,
         },
       }
     );
 
+    // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i;
 
     config.resolve.fallback = {
