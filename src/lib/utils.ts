@@ -5,14 +5,15 @@ export function getImageProxyUrl(): string | null {
   return null;
 }
 
-// 🔥 全局万能图片代理（所有图片必显示）
+// 🔥 全局万能代理，首页/搜索页都生效
 export function processImageUrl(originalUrl: string): string {
-  if (!originalUrl) return "https://via.placeholder.com/320x480?text=No+Image";
-  
+  if (!originalUrl) {
+    return 'https://images.weserv.nl/?url=https://via.placeholder.com/320x480&il';
+  }
   try {
     return `https://images.weserv.nl/?url=${encodeURIComponent(originalUrl)}&il`;
   } catch {
-    return "https://via.placeholder.com/320x480?text=No+Image";
+    return 'https://images.weserv.nl/?url=https://via.placeholder.com/320x480&il';
   }
 }
 
@@ -25,13 +26,13 @@ export function processDoubanUrl(originalUrl: string): string {
 }
 
 export function cleanHtmlTags(text: string): string {
-  if (!text) return "";
+  if (!text) return '';
   return text
-    .replace(/<[^>]+>/g, "\n")
-    .replace(/\n+/g, "\n")
-    .replace(/[ \t]+/g, " ")
-    .replace(/^\n+|\n+$/g, "")
-    .replace(/&nbsp;/g, " ")
+    .replace(/<[^>]+>/g, '\n')
+    .replace(/\n+/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/^\n+|\n+$/, '')
+    .replace(/&nbsp;/g, ' ')
     .trim();
 }
 
@@ -41,8 +42,8 @@ export async function getVideoResolutionFromM3u8(m3u8Url: string): Promise<{
   pingTime: number;
 }> {
   return {
-    quality: "1080p",
-    loadSpeed: "未知",
+    quality: '1080p',
+    loadSpeed: '未知',
     pingTime: 0,
   };
 }
